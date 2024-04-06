@@ -1,8 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import IShelterRepository from './interfaces/shelter.repository.interface';
 import { Shelter } from './schemas/shelter.schema';
 
+@Injectable()
 export class ShelterRepository implements IShelterRepository {
   constructor(
     @InjectModel(Shelter.name)
