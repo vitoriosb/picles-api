@@ -1,9 +1,19 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { IUseCase } from 'src/shelter/domain/iusecase.interface';
 import CreatePetControllerInput from './dtos/create.pet.controller.input';
 import PetTokens from './pet.tokens';
 import CreatePetUseCaseInput from './usecases/dtos/create.pet.usecase.input';
 import CreatePetUseCaseOutput from './usecases/dtos/create.pet.usecase.output';
+import GetPetByIdUseCaseInput from './usecases/dtos/get.pet.by.id.usecase.input';
+import GetPetByIdUseCaseOutput from './usecases/dtos/get.pet.by.id.usecase.output';
 
 @Controller('pet')
 export class PetController {
@@ -13,11 +23,27 @@ export class PetController {
     CreatePetUseCaseOutput
   >;
 
+  @Inject(PetTokens.getPetByIdUseCase)
+  private readonly getPetByIdUseCase: IUseCase<
+    GetPetByIdUseCaseInput,
+    GetPetByIdUseCaseOutput
+  >;
+
   @Post()
   async createPet(
     @Body() input: CreatePetControllerInput,
   ): Promise<CreatePetUseCaseOutput> {
-    const useCaseInput = new CreatePetControllerInput({ ...input });
+    const useCaseInput = new CreatePetUseCaseInput({ ...input });
     return await this.createPetUseCase.run(useCaseInput);
+  }
+
+  @Get(':id')
+  async getPetById(@Param('id') id: string): Promise<GetPetByIdUseCaseOutput> {
+    try {
+      const useCaseInput = new GetPetByIdUseCaseInput({ id });
+      return await this.getPetByIdUseCase.run(useCaseInput);
+    } catch (error) {
+      throw new NotFoundException(JSON.parse(error.message));
+    }
   }
 }
