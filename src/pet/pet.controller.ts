@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import DeletePetByIdUseCaseInput from './usecases/dtos/delete.pet.by.id.usecase.
 import DeletePetByIdUseCaseOutput from './usecases/dtos/delete.pet.by.id.usecase.output';
 import GetPetByIdUseCaseInput from './usecases/dtos/get.pet.by.id.usecase.input';
 import GetPetByIdUseCaseOutput from './usecases/dtos/get.pet.by.id.usecase.output';
+import GetPetsUseCaseInput from './usecases/dtos/get.pets.usecase.input';
 import UpdatePetByIdUseCaseInput from './usecases/dtos/update.pet.by.id.usecase.input';
 import UpdatePetByIdUseCaseOutput from './usecases/dtos/update.pet.by.id.usecase.output';
 import UpdatePetPhotoByIdUseCaseInput from './usecases/dtos/update.pet.photo.by.id.usecase.input';
@@ -104,5 +106,26 @@ export class PetController {
       photoPath: photo.path,
     });
     return await this.updatePetPhotoByIdUseCase.run(useCaseInput);
+  }
+
+  @Get()
+  async getPets(
+    @Query('type') type?: string,
+    @Query('size') size?: string,
+    @Query('gender') gender?: string,
+    @Query('page') page?: string,
+    @Query('itemsPerPage') itemsPerPage?: string,
+  ) {
+    const FIRST_PAGE = 1;
+    const DEFAULT_ITENS_PER_PAGE = 10;
+    const useCaseInput = new GetPetsUseCaseInput({
+      type: !!type ? type : null,
+      size: !!size ? size : null,
+      gender: !!gender ? gender : null,
+      page: !!page ? parseInt(page) : FIRST_PAGE,
+      itemsPerPage: !!itemsPerPage
+        ? parseInt(itemsPerPage)
+        : DEFAULT_ITENS_PER_PAGE,
+    });
   }
 }
