@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import AppTokens from 'src/app.tokens';
 import PetNotFoundError from 'src/domain/errors/pet.not.found.error';
 import { IUseCase } from 'src/shelter/domain/iusecase.interface';
+import IFileService from '../interface/file.service.interface';
 import IPetRepository from '../interface/pet.repository.interface';
 import PetTokens from '../pet.tokens';
 import { Pet } from '../schemas/pet.schema';
@@ -14,6 +16,9 @@ export default class UpdatePetByIdUseCase
   constructor(
     @Inject(PetTokens.petRepository)
     private readonly petRepository: IPetRepository,
+
+    @Inject(AppTokens.fileService)
+    private readonly fileService: IFileService,
   ) {}
   async run(
     input: UpdatePetByIdUseCaseInput,
@@ -23,6 +28,10 @@ export default class UpdatePetByIdUseCase
       throw new PetNotFoundError();
     }
 
+    const petPhoto = !!pet.photo
+      ? (await this.fileService.readFile(pet.photo)).toString('base64')
+      : null;
+
     await this.petRepository.updateById({ ...input, _id: input.id });
     return new UpdatePetByIdUseCaseOutput({
       id: pet._id,
@@ -31,7 +40,7 @@ export default class UpdatePetByIdUseCase
       size: pet.size,
       gender: pet.gender,
       bio: pet.bio,
-      photo: pet.photo,
+      photo: petPhoto,
       createdAt: pet.createdAt,
       updatedAt: pet.updatedAt,
     });

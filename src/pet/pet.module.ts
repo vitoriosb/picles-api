@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import AppTokens from 'src/app.tokens';
+import FileService from 'src/file.service';
 import { PetController } from './pet.controller';
 import PetRepository from './pet.repository';
 import PetTokens from './pet.tokens';
@@ -32,6 +34,14 @@ import UpdatePetByIdUseCase from './usecases/update.pet.by.id.usecase';
     {
       provide: PetTokens.deletePetByIdUseCase,
       useClass: DeletePetByIdUseCase,
+    },
+    {
+      provide: PetTokens.updatePetByIdUseCase,
+      useClass: UpdatePetByIdUseCase,
+    },
+    {
+      provide: AppTokens.fileService,
+      useClass: FileService,
     },
   ],
 })

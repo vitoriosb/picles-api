@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ShelterModule } from './shelter/shelter.module';
+import { MulterModule } from '@nestjs/platform-express';
 import { PetModule } from './pet/pet.module';
+import { ShelterModule } from './shelter/shelter.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ShelterModule,
+    MulterModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,7 +19,5 @@ import { PetModule } from './pet/pet.module';
     ShelterModule,
     PetModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
