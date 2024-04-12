@@ -9,6 +9,7 @@ import { Pet, PetSchema } from './schemas/pet.schema';
 import CreatePetUseCase from './usecases/create.pet.usecase';
 import DeletePetByIdUseCase from './usecases/delete.pet.by.id.usecase';
 import GetPetByIdUseCase from './usecases/get.by.id.usecase';
+import GetPetsUseCase from './usecases/get.pets.usecase';
 import UpdatePetByIdUseCase from './usecases/update.pet.by.id.usecase';
 
 @Module({
@@ -38,6 +39,10 @@ import UpdatePetByIdUseCase from './usecases/update.pet.by.id.usecase';
     {
       provide: PetTokens.updatePetByIdUseCase,
       useClass: UpdatePetByIdUseCase,
+    },
+    {
+      provide: PetTokens.getPetsUseCase,
+      useClass: GetPetsUseCase,
     },
     {
       provide: AppTokens.fileService,

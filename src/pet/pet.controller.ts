@@ -26,6 +26,7 @@ import DeletePetByIdUseCaseOutput from './usecases/dtos/delete.pet.by.id.usecase
 import GetPetByIdUseCaseInput from './usecases/dtos/get.pet.by.id.usecase.input';
 import GetPetByIdUseCaseOutput from './usecases/dtos/get.pet.by.id.usecase.output';
 import GetPetsUseCaseInput from './usecases/dtos/get.pets.usecase.input';
+import GetPetsUseCaseOutput from './usecases/dtos/get.pets.usecase.output';
 import UpdatePetByIdUseCaseInput from './usecases/dtos/update.pet.by.id.usecase.input';
 import UpdatePetByIdUseCaseOutput from './usecases/dtos/update.pet.by.id.usecase.output';
 import UpdatePetPhotoByIdUseCaseInput from './usecases/dtos/update.pet.photo.by.id.usecase.input';
@@ -37,6 +38,11 @@ export class PetController {
   private readonly createPetUseCase: IUseCase<
     CreatePetUseCaseInput,
     CreatePetUseCaseOutput
+  >;
+  @Inject(PetTokens.createPetUseCase)
+  private readonly getPetsUseCase: IUseCase<
+    GetPetsUseCaseInput,
+    GetPetsUseCaseOutput
   >;
   @Inject(PetTokens.getPetByIdUseCase)
   private readonly getPetByIdUseCase: IUseCase<
@@ -115,7 +121,7 @@ export class PetController {
     @Query('gender') gender?: string,
     @Query('page') page?: string,
     @Query('itemsPerPage') itemsPerPage?: string,
-  ) {
+  ): Promise<GetPetsUseCaseOutput> {
     const FIRST_PAGE = 1;
     const DEFAULT_ITENS_PER_PAGE = 10;
     const useCaseInput = new GetPetsUseCaseInput({
@@ -127,5 +133,6 @@ export class PetController {
         ? parseInt(itemsPerPage)
         : DEFAULT_ITENS_PER_PAGE,
     });
+    return await this.getPetsUseCase.run(useCaseInput);
   }
 }
